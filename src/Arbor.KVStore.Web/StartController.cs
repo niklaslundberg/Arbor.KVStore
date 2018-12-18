@@ -41,6 +41,29 @@ namespace Arbor.KVStore.Web
             Response.Cookies.Append(ClientIdCookieName, clientId.Id);
         }
 
+        [Route(RouteConstants.ExportRoute, Name = RouteConstants.ExportRouteName)]
+        [HttpGet]
+        public IActionResult Export()
+        {
+            ImmutableArray<KeyValue> valuePairs = _app
+                .ReadAllValues(GetClientId())
+                .Select(pair => new KeyValue(pair.Key, pair.Value, null))
+                .OrderBy(pair => pair.Key)
+                .ThenBy(pair => pair.Value)
+                .ToImmutableArray();
+
+            var jsonConfigurationSerializer = new JsonConfigurationSerializer();
+
+            var json = jsonConfigurationSerializer.Serialize(new ConfigurationItems("1.0", valuePairs));
+            
+            return new ContentResult
+            {
+                Content = json,
+                ContentType = "application/json",
+                StatusCode = 200
+            };
+        }
+
         [Route(RouteConstants.ImportRoute, Name = RouteConstants.ImportRouteName)]
         [HttpPost]
         public async Task<IActionResult> Import([FromBody] ImportData importData, IFormFile importFile)

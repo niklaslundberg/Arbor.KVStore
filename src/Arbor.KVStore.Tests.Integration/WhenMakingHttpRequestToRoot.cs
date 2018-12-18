@@ -26,7 +26,7 @@ namespace Arbor.KVStore.Tests.Integration
         [Fact]
         public async Task ThenItShouldReturnHttpStatusCodeOk200()
         {
-            _tempDir = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "kvstore" + Guid.NewGuid()));
+            _tempDir = new DirectoryInfo(Path.Combine(Path.GetTempPath(), $"kvstore{Guid.NewGuid()}"));
 
             if (!_tempDir.Exists)
             {
@@ -34,7 +34,7 @@ namespace Arbor.KVStore.Tests.Integration
             }
 
             HttpStatusCode statusCode;
-            using (var cts = new CancellationTokenSource())
+            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
             {
                 int port = 5051;
                 string httpPortArg = $"{ArgConstants.HttpPort}={port}";

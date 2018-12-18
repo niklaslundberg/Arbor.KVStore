@@ -44,12 +44,22 @@
 
         <h3>Import</h3>
 
-        <form method="post" action="/import" enctype="multipart/form-data">
+        <form method="post" action="@Url.RouteUrl(RouteConstants.ImportRouteName)" enctype="multipart/form-data">
             Import file <input type="file" name="importFile" />
 
             <label for="import-comment">Comment</label> <input id="import-comment" type="text" name="comment" />
 
             <input type="submit" value="Import" />
+        </form>
+    </div>
+    <div>
+
+        <h3>Export</h3>
+
+        <form method="get" action="@Url.RouteUrl(RouteConstants.ExportRouteName)">
+            
+            <input type="submit" value="Export" />
+            
         </form>
     </div>
     <div>

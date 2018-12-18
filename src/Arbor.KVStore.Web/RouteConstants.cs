@@ -5,6 +5,10 @@
         public const string ImportRoute = "~/import";
 
         public const string ImportRouteName = nameof(ImportRoute);
+        
+        public const string ExportRoute = "~/export";
+
+        public const string ExportRouteName = nameof(ExportRoute);
 
         public const string StartRoute = "~/";
 
