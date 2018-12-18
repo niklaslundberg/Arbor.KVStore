@@ -25,5 +25,9 @@
         public const string ClientRoute = "~/client";
 
         public const string ClientRouteName = nameof(ClientRoute);
+        
+        public const string CreateClientRoute = "~/clients";
+
+        public const string CreateClientRouteName = nameof(CreateClientRoute);
     }
 }

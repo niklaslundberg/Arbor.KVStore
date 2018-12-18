@@ -138,6 +138,25 @@ namespace Arbor.KVStore.Web
 
             return RedirectToIndex();
         }
+        
+        [HttpPost]
+        [Route(RouteConstants.CreateClientRoute, Name = RouteConstants.CreateClientRouteName)]
+        public async Task<IActionResult> PostCreateClient([FromBody] ClientId clientId)
+        {
+            if (clientId != null)
+            {
+                var clients = _app.GetClients();
+
+                if (!clients.Contains(clientId))
+                {
+                    await _app.EnsureClientExists(clientId);
+                }
+
+                SetCookie(clientId);
+            }
+
+            return RedirectToIndex();
+        }
 
         [HttpGet]
         [Route(RouteConstants.ClientValuesRoute, Name = RouteConstants.ClientValuesRouteName)]

@@ -14,6 +14,18 @@
 
 <div>
 
+    <form method="post" action="@Url.RouteUrl(RouteConstants.CreateClientRouteName)">
+
+        <label for="clientId">Client Id</label> <input type="text" name="id" id="clientId"/>
+
+        <input type="submit" value="Create client"/>
+        
+    </form>
+    
+</div>
+
+<div>
+
     <form method="post" action="/client">
 
         <select name="id">
@@ -23,7 +35,7 @@
             }
         </select>
 
-        <input type="submit" value="Set client" />
+        <input type="submit" value="Set client"/>
     </form>
 </div>
 
@@ -37,7 +49,7 @@
 
         <h3>Values</h3>
 
-        <a href="@Url.RouteUrl(RouteConstants.ClientValuesRouteName, new { clientId = Model.ClientId })">Values</a>
+        <a href="@Url.RouteUrl(RouteConstants.ClientValuesRouteName, new {clientId = Model.ClientId})">Values</a>
     </div>
 
     <div>
@@ -45,11 +57,11 @@
         <h3>Import</h3>
 
         <form method="post" action="@Url.RouteUrl(RouteConstants.ImportRouteName)" enctype="multipart/form-data">
-            Import file <input type="file" name="importFile" />
+            Import file <input type="file" name="importFile"/>
 
-            <label for="import-comment">Comment</label> <input id="import-comment" type="text" name="comment" />
+            <label for="import-comment">Comment</label> <input id="import-comment" type="text" name="comment"/>
 
-            <input type="submit" value="Import" />
+            <input type="submit" value="Import"/>
         </form>
     </div>
     <div>
@@ -57,20 +69,20 @@
         <h3>Export</h3>
 
         <form method="get" action="@Url.RouteUrl(RouteConstants.ExportRouteName)">
-            
-            <input type="submit" value="Export" />
-            
+
+            <input type="submit" value="Export"/>
+
         </form>
     </div>
     <div>
         <h3>New key-value pair</h3>
         <form method="post">
 
-            <input type="hidden" name="clientId" value="@Model.ClientId.Id" />
-            <input type="text" name="key" />
-            <input type="text" name="value" />
+            <input type="hidden" name="clientId" value="@Model.ClientId.Id"/>
+            <input type="text" name="key"/>
+            <input type="text" name="value"/>
 
-            <input type="submit" value="Store" />
+            <input type="submit" value="Store"/>
 
         </form>
     </div>
@@ -81,10 +93,11 @@
 
         function copyValue(newClip) {
 
-            navigator.clipboard.writeText(newClip).then(function () {
+            navigator.clipboard.writeText(newClip).then(function() {
 
-            }, function () {
-            });
+                },
+                function() {
+                });
         }
 
     </script>
@@ -95,23 +108,23 @@
 
             <form method="post">
 
-                <input type="hidden" name="clientId" value="@storedValue.ClientId" />
-                <input type="hidden" name="key" value="@storedValue.Key" />
+                <input type="hidden" name="clientId" value="@storedValue.ClientId"/>
+                <input type="hidden" name="key" value="@storedValue.Key"/>
 
                 @Html.Raw(storedValue.HtmlInput())
 
-                <input type="submit" value="Store" />
+                <input type="submit" value="Store"/>
 
-                <input type="hidden" id="key-@storedValue.Key" />
+                <input type="hidden" id="key-@storedValue.Key"/>
 
             </form>
 
             <form method="post" action="/delete">
 
-                <input type="hidden" name="clientId" value="@storedValue.ClientId" />
-                <input type="hidden" name="key" value="@storedValue.Key" />
+                <input type="hidden" name="clientId" value="@storedValue.ClientId"/>
+                <input type="hidden" name="key" value="@storedValue.Key"/>
 
-                <input type="submit" value="Delete" />
+                <input type="submit" value="Delete"/>
 
             </form>
 
@@ -122,4 +135,3 @@
         </div>
     }
 }
-
