@@ -22,7 +22,7 @@
     <licenseUrl>https://github.com/niklaslundberg/Arbor.KVStore/blob/master/LICENSE.txt</licenseUrl>
     <copyright>Copyright Niklas Lundberg 2018-2019</copyright>
     <dependencies>
-      <dependency id="Arbor.KVConfiguration.Schema.Json" version="0.17.0" />
+      <dependency id="Arbor.KVConfiguration.Schema.Json" version="0.17.2" />
       <dependency id="Serilog" version="[2.6.0, 3.0.0)" />
       <dependency id="Spreads.LMDB" version="[2019.0.0, 2020.0.0)" />
     </dependencies>
