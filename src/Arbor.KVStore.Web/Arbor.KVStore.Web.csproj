@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Arbor.AspNetCore.Mvc.Formatting.HtmlForms" Version="0.7.0" />
+    <PackageReference Include="Arbor.AspNetCore.Mvc.Formatting.HtmlForms" Version="0.6.0" />
     <PackageReference Include="Arbor.KVConfiguration.JsonConfiguration" Version="0.17.2" />
     <PackageReference Include="Arbor.KVConfiguration.Schema.Json" Version="0.17.2" />
     <PackageReference Include="Arbor.ModelBinding" Version="0.4.0" />
