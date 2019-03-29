@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using Serilog.Core;
 using Spreads.Buffers;
 using Spreads.LMDB;
 
@@ -29,33 +28,65 @@ namespace Arbor.KVStore
 
         public CancellationTokenSource CancellationTokenSource { get; }
 
-        public static async Task<App> CreateAsync(string[] args, CancellationTokenSource cancellationTokenSource)
+        private async Task<int> PutDbAsync(ClientId clientId)
+        {
+            int exitCode = 0;
+            byte[] keyAsBytes = Encoding.UTF8.GetBytes(ClientIdPrefix + clientId.Id);
+            byte[] valueAsBytes = Encoding.UTF8.GetBytes(clientId.Id);
+
+            var keyBuffer = new DirectBuffer(keyAsBytes);
+            var valueBuffer = new DirectBuffer(valueAsBytes);
+
+            using (Database db =
+                _lmdbEnvironment.OpenDatabase(MetaDb, new DatabaseConfig(DbFlags.Create)))
+            {
+                await db.Environment.WriteAsync(tx =>
+                {
+                    try
+                    {
+                        db.Put(tx, ref keyBuffer, ref valueBuffer);
+
+                        tx.Commit();
+
+                        _logger.Information("Successfully stored client with id {Id}", clientId.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        tx.Abort();
+                        _logger.Error(ex, "Aborted transaction");
+                        exitCode = 1;
+                    }
+                });
+            }
+
+            return exitCode;
+        }
+
+        public static async Task<App> CreateAsync(
+            string[] args,
+            ILogger logger,
+            CancellationTokenSource cancellationTokenSource)
         {
             string dbDir = args.FirstOrDefault(arg => arg.StartsWith(ArgConstants.DbDir))?.Split('=').LastOrDefault();
 
-            DirectoryInfo environmentDirectory = new DirectoryInfo(dbDir ?? @"C:\Work\LmdbTest").EnsureExists();
+            if (string.IsNullOrWhiteSpace(dbDir))
+            {
+                dbDir = Environment.GetEnvironmentVariable(ArgConstants.DbDir);
+
+                if (string.IsNullOrWhiteSpace(dbDir))
+                {
+                    throw new InvalidOperationException($"DbDir is not specified in arg or environment variable {ArgConstants.DbDir}");
+                }
+            }
+
+            DirectoryInfo environmentDirectory = new DirectoryInfo(dbDir).EnsureExists();
 
             LMDBEnvironment environment = LMDBEnvironment.Create(environmentDirectory.FullName,
-                DbEnvironmentFlags.WriteMap | DbEnvironmentFlags.NoSync);
+                LMDBEnvironmentFlags.WriteMap | LMDBEnvironmentFlags.NoSync);
 
             environment.MapSize = 126 * 1024 * 1024;
 
-            Logger logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
-
-            return new App(logger, environment, cancellationTokenSource ??new CancellationTokenSource());
-        }
-
-        public async Task DisposeAsync()
-        {
-            await _lmdbEnvironment.Close();
-        }
-
-        public void Dispose()
-        {
-            if (_logger is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
+            return new App(logger, environment, cancellationTokenSource ?? new CancellationTokenSource());
         }
 
         public ImmutableArray<ClientId> GetClients()
@@ -235,38 +266,17 @@ namespace Arbor.KVStore
             }
         }
 
-        private async Task<int> PutDbAsync(ClientId clientId)
+        public async Task DisposeAsync()
         {
-            int exitCode = 0;
-            byte[] keyAsBytes = Encoding.UTF8.GetBytes(ClientIdPrefix + clientId.Id);
-            byte[] valueAsBytes = Encoding.UTF8.GetBytes(clientId.Id);
+            await _lmdbEnvironment.Close();
+        }
 
-            var keyBuffer = new DirectBuffer(keyAsBytes);
-            var valueBuffer = new DirectBuffer(valueAsBytes);
-
-            using (Database db =
-                _lmdbEnvironment.OpenDatabase(MetaDb, new DatabaseConfig(DbFlags.Create)))
+        public void Dispose()
+        {
+            if (_logger is IDisposable disposable)
             {
-                await db.Environment.WriteAsync(tx =>
-                {
-                    try
-                    {
-                        db.Put(tx, ref keyBuffer, ref valueBuffer);
-
-                        tx.Commit();
-
-                        _logger.Information("Successfully stored client with id {Id}", clientId.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        tx.Abort();
-                        _logger.Error(ex, "Aborted transaction");
-                        exitCode = 1;
-                    }
-                });
+                disposable.Dispose();
             }
-
-            return exitCode;
         }
     }
 }

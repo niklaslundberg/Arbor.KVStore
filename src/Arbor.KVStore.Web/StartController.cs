@@ -38,7 +38,10 @@ namespace Arbor.KVStore.Web
 
         private void SetCookie(ClientId clientId)
         {
-            Response.Cookies.Append(ClientIdCookieName, clientId.Id);
+            if (clientId != null)
+            {
+                Response.Cookies.Append(ClientIdCookieName, clientId.Id);
+            }
         }
 
         [Route(RouteConstants.ExportRoute, Name = RouteConstants.ExportRouteName)]
@@ -52,10 +55,9 @@ namespace Arbor.KVStore.Web
                 .ThenBy(pair => pair.Value)
                 .ToImmutableArray();
 
-            var jsonConfigurationSerializer = new JsonConfigurationSerializer();
 
-            var json = jsonConfigurationSerializer.Serialize(new ConfigurationItems("1.0", valuePairs));
-            
+            var json = JsonConfigurationSerializer.Serialize(new ConfigurationItems("1.0", valuePairs));
+
             return new ContentResult
             {
                 Content = json,
@@ -138,7 +140,7 @@ namespace Arbor.KVStore.Web
 
             return RedirectToIndex();
         }
-        
+
         [HttpPost]
         [Route(RouteConstants.CreateClientRoute, Name = RouteConstants.CreateClientRouteName)]
         public async Task<IActionResult> PostCreateClient([FromBody] ClientId clientId)

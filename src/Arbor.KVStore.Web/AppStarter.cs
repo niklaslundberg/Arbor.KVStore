@@ -8,11 +8,15 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Serilog.Core;
 
 namespace Arbor.KVStore.Web
 {
     public static class AppStarter
     {
+        public const string HttpPort = "arbor:kvstore:http-port";
+
         public static async Task<App> CreateAndStartAsync(
             string[] args,
             [NotNull] CancellationTokenSource cancellationTokenSource)
@@ -22,7 +26,9 @@ namespace Arbor.KVStore.Web
                 throw new ArgumentNullException(nameof(cancellationTokenSource));
             }
 
-            App app = await App.CreateAsync(args, cancellationTokenSource);
+            Logger logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+
+            App app = await App.CreateAsync(args, logger, cancellationTokenSource);
 
             await app.StartAsync(args);
 
@@ -44,9 +50,11 @@ namespace Arbor.KVStore.Web
             string[] args,
             CancellationTokenSource cancellationTokenSource = default)
         {
-            using (App app = await App.CreateAsync(args, cancellationTokenSource))
+            Logger logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+
+            using (App app = await App.CreateAsync(args, logger, cancellationTokenSource))
             {
-                IWebHost webhost = null;
+                IWebHost webHost = null;
                 try
                 {
                     int startExitCode = await app.StartAsync(args);
@@ -70,19 +78,19 @@ namespace Arbor.KVStore.Web
                         return startExitCode;
                     }
 
-                    webhost = CreateWebHostBuilder(args, app).Build();
+                    webHost = CreateWebHostBuilder(args, app).Build();
 
-                    await webhost.StartAsync();
+                    await webHost.StartAsync();
 
-                    var applicationLifetime = webhost.Services.GetService<IApplicationLifetime>();
+                    var applicationLifetime = webHost.Services.GetService<IApplicationLifetime>();
 
                     applicationLifetime.ApplicationStopped.Register(() => app.CancellationTokenSource.Cancel());
 
-                    webhost.WaitForShutdown();
+                    webHost.WaitForShutdown();
                 }
                 finally
                 {
-                    webhost?.Dispose();
+                    webHost?.Dispose();
 
                     await app.DisposeAsync();
                 }
@@ -95,7 +103,7 @@ namespace Arbor.KVStore.Web
         {
             int? httpPort = null;
 
-            if (int.TryParse(args.SingleOrDefault(arg => arg.StartsWith($"{ArgConstants.HttpPort}="))?.Split('=')
+            if (int.TryParse(args.SingleOrDefault(arg => arg.StartsWith($"{HttpPort}="))?.Split('=')
                     .LastOrDefault(),
                 out int port))
             {

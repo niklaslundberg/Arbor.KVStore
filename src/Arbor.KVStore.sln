@@ -7,12 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.KVStore", "Arbor.KVSt
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{677AC47B-C736-4799-8099-522AAC021F19}"
 	ProjectSection(SolutionItems) = preProject
-		nuget.config = nuget.config
+		..\.editorconfig = ..\.editorconfig
+		..\.gitattributes = ..\.gitattributes
+		..\.gitignore = ..\.gitignore
+		..\LICENSE.txt = ..\LICENSE.txt
+		..\README.md = ..\README.md
+		..\version.json = ..\version.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.KVStore.Web", "Arbor.KVStore.Web\Arbor.KVStore.Web.csproj", "{B8E7460C-08C0-4D53-9744-F1AA5075DC5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arbor.KVStore.Tests.Integration", "Arbor.KVStore.Tests.Integration\Arbor.KVStore.Tests.Integration.csproj", "{681F152E-2566-4442-9B84-C8062EA9FC10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.KVStore.Tests.Integration", "Arbor.KVStore.Tests.Integration\Arbor.KVStore.Tests.Integration.csproj", "{681F152E-2566-4442-9B84-C8062EA9FC10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

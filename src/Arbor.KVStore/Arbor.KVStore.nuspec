@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<package>
+  <metadata>
+    <id>Arbor.KVStore</id>
+    <version>0.0.1</version>
+    <title>Arbor.KVStore</title>
+    <authors>Niklas Lundberg</authors>
+    <owners></owners>
+    <description>
+      Key value store library using LMDB
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <summary>
+      Arbor.KVStore
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://github.com/niklaslundberg/Arbor.KVStore</projectUrl>
+    <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon-50x50.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/niklaslundberg/Arbor.KVStore/blob/master/LICENSE.txt</licenseUrl>
+    <copyright>Copyright Niklas Lundberg 2018-2019</copyright>
+    <dependencies>
+      <dependency id="Arbor.KVConfiguration.Schema.Json" version="0.17.0" />
+      <dependency id="Serilog" version="[2.6.0, 3.0.0)" />
+      <dependency id="Spreads.LMDB" version="[2019.0.0, 2020.0.0)" />
+    </dependencies>
+    <references></references>
+    <tags></tags>
+  </metadata>
+  <files>
+    <file src="bin\$configuration$\netstandard2.0\Arbor.KVStore.dll" target="lib\netstandard2.0" />
+  </files>
+</package>

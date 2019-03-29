@@ -6,11 +6,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Arbor.KVStore.Web;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Arbor.KVStore.Tests.Integration
 {
     public class WhenMakingHttpRequestToRoot : IDisposable
     {
+        private readonly ITestOutputHelper _output;
+
+        public WhenMakingHttpRequestToRoot(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         public void Dispose()
         {
             _tempDir?.Refresh();
@@ -37,10 +45,11 @@ namespace Arbor.KVStore.Tests.Integration
             using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
             {
                 int port = 5051;
-                string httpPortArg = $"{ArgConstants.HttpPort}={port}";
+                string httpPortArg = $"{AppStarter.HttpPort}={port}";
                 string dbDirArg = $"{ArgConstants.DbDir}={_tempDir.FullName}";
 
-                string[] args = {
+                string[] args =
+                {
                     httpPortArg,
                     dbDirArg
                 };
@@ -49,10 +58,18 @@ namespace Arbor.KVStore.Tests.Integration
                 {
                     using (var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:{port}/"))
                     {
-                        using (HttpResponseMessage httpResponseMessage =
-                            await new HttpClient().SendAsync(request, cts.Token))
+                        using (var httpClient = new HttpClient())
                         {
-                            statusCode = httpResponseMessage.StatusCode;
+                            using (HttpResponseMessage httpResponseMessage =
+                                await httpClient.SendAsync(request, cts.Token))
+                            {
+                                statusCode = httpResponseMessage.StatusCode;
+                                _output.WriteLine($"Status code {statusCode}");
+
+                                string content = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                                _output.WriteLine(content);
+                            }
                         }
                     }
 
